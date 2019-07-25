@@ -1,0 +1,243 @@
+@startuml
+
+object Boolean
+object Temperature {
+    two bytes
+}
+object Voltage {
+    two bytes
+}
+object Current {
+    two bytes
+}
+object Torque {
+    two bytes
+}
+object Flux {
+    two bytes
+}
+object Angle {
+    two bytes
+}
+object AngleVelocity {
+    two bytes
+}
+object Frequency {
+    two bytes
+}
+
+object Internal___
+
+
+object Temperatures1 {
+    ID 0x0A0
+    Frequency 10Hz
+    ----
+    ModATemp (0,1)
+    ModBTemp (2,3)
+    ModCTemp (4,5)
+    GateDriverBoardTemp (6,7)
+}
+Temperatures1 o-- "4" Temperature
+
+object Temperatures2 {
+    ID 0x0A1
+    Frequency 10Hz
+    ----
+    ControlBoardTemp (0,1)
+    RTD1Temp (2,3)
+    RTD2Temp (4,5)
+    RTD3Temp (6,7) [Gen 2 only]
+}
+Temperatures2 o-- "4" Temperature
+
+object Temperatures3 {
+    ID 0x0A2
+    Frequency 10Hz
+    ----
+    RTD4Temp (0,1)
+    RTD5Temp (2,3)
+    MotorTemp (4,5)
+    TorqueShudder (6,7)
+}
+Temperatures3 o-- "4" Temperature
+
+object AnaInVoltage{
+    ID 0x0A3
+    Frequency 100Hz
+    ----
+    <1995
+    AnIn1 (0,1)
+    AnIn2 (2,3)
+    AnIn3 (4,5)
+    AnIn4 (6,7)
+    ----
+    >1995
+    AnIn1 (b0,b9)
+    AnIn2 (b10,b19)
+    AnIn3 (b20,b29)
+    AnIn4 (b32,b41)
+    AnIn5 (b42,b51)
+    AnIn6 (b52,b61)
+}
+AnaInVoltage o-- "4" Voltage
+
+object DigInStatus {
+    ID 0x0A4
+    Frequency 100Hz
+    ----
+    DigIn1 (0)
+    DigIn2 (1)
+    DigIn3 (2)
+    DigIn4 (3)
+    DigIn5 (4)
+    DigIn6 (5)
+    DigIn7 (6)
+    DigIn8 (7)
+}
+DigInStatus o-- "8" Boolean
+
+object MotorPosInfo {
+    ID 0x0A5
+    Frequency 100Hz
+    ----
+    MotorAngle (0,1)
+    MotorSpeed (2,3)
+    ElectricalOutFreq (4,5)
+    DeltaResolverFiltered (6,7)
+}
+MotorPosInfo o-- "2" Angle
+MotorPosInfo o-- "1" AngleVelocity
+MotorPosInfo o-- "1" Frequency
+MotorPosInfo o-- Flux
+
+object CurrentInfo {
+    ID 0x0A6
+    Frequency 100Hz
+    ----
+    PhaseCurrentA (0,1)
+    PhaseCurrentA (2,3)
+    PhaseCurrentA (4,5)
+    DCBusCurrent (6,7)
+}
+CurrentInfo o-- "4" Current
+
+object VoltageInfo {
+    ID 0x0A7
+    Frequency 100Hz
+    ----
+    DCBusVoltage (0,1)
+    OutVoltage (2,3)
+    VAB_Vd_Voltage (4,5)
+    VBC_Vq_Voltage (6,7)
+}
+VoltageInfo o-- "4" Voltage
+
+object FluxInfo {
+    ID 0x0A8
+    Frequency 100Hz
+    ----
+    FluxCommand (0,1)
+    FluxFeedback (2,3)
+    IdFeedback (4,5)
+    IqFededback (6,7)
+}
+FluxInfo o-- "2" Flux
+FluxInfo o-- "2" Current
+
+object InternalVoltage {
+    ID 0x0A9
+    Frequency 10Hz
+    ----
+    Ref1V5Voltage (0,1)
+    Ref2V5Voltage (2,3)
+    Ref5V0Voltage (4,5)
+    Ref12VVoltage (6,7)
+}
+InternalVoltage o-- "4" Voltage
+
+object InternalStates {
+    ID 0x0AA
+    Frequency 100Hz
+    ----
+    VSMState (0,1)
+    InverterState (2)
+    RelayState (3)
+    InverterRunMode (4b0)
+    InverterActDischargeState (4b5, 4b7)
+    InverterCommandMode (5)
+    InverterEnableState (6b7)
+    DirectionCommand (7b0)
+    BMSActive (7b1)
+    BMSLimitingTorque (7b2)
+}
+InternalStates o-- "11" Internal___
+
+object FaultCodes {
+    ID 0x0AB
+    Frequency 10Hz
+    ----
+    POSTFaultLo (0,1)
+    POSTFaultHi (2,3)
+    RunFaultLo (4,5)
+    RunFaultHi (6,7)
+}
+FaultCodes o-- "4" Internal___
+
+object TorqueTimeInfo {
+    ID 0x0AC
+    Frequency 100Hz
+    ----
+    CommandedTorque (0,1)
+    TorqueFeedback (2,3)
+    PowerOnTime (4,5,6,7)
+}
+TorqueTimeInfo o-- "2" Torque
+FaultCodes o-- "4" Counts
+
+object ModulationIndexFluxOutInfo {
+    ID 0x0AD
+    Frequency 100Hz
+    ----
+    ModulationIndex (0,1)
+    FluxWeakOut (2,3)
+    IdCommand (4,5)
+    IdCommand (6,7)
+}
+ModulationIndexFluxOutInfo o-- PerUnitValue
+ModulationIndexFluxOutInfo o-- "3" Current
+
+object FirmwareInfo {
+    ID 0x0AE
+    Frequency 10Hz
+    ----
+    EEPROMVersion (0,1)
+    SoftVersion (2,3)
+    DataCodeMMDD (4,5)
+    DateCodeYYYY (6,7)
+}
+FirmwareInfo o-- "4" NA
+
+object DiagnosticData {
+    ID 0x0AF
+    Frequency 100Hz
+    ----
+}
+
+object CommandMessage {
+    ID 0x0C0
+    Frequency 2Hz?
+    ----
+    TorqueCommand (0,1)
+    SpeedCommand (2,3)
+    DirectionCommand (4)
+    InverterEnable (5b0)
+    InverterDischarge (5b1)
+    SpeedModeEnable (5b2)
+    CommmandedTorqueLimit (6,7)
+}
+CommandMessage o-- "2" Torque
+CommandMessage o-- "1" AngleVelocity
+CommandMessage o-- "4" Boolean
+
+@enduml
